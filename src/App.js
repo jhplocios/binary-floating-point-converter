@@ -4,6 +4,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
+  /** initialize variables */
   const [mode, setMode] = React.useState('single');
   const [sign, setSign] = React.useState('0');
   const [wholeNumber, setWholeNumber] = React.useState('');
@@ -14,10 +15,12 @@ function App() {
   const [hasCompleteInput, setHasCompleteInput] = React.useState(false);
   const [maxExponent, setMaxExponent] = React.useState(127);
 
+  /** update the state whenever inputs are changed */
   React.useEffect(() => {
     setHasCompleteInput(!!wholeNumber && !!fractionNumber && !!exponent)
   }, [wholeNumber, fractionNumber, exponent])
 
+  /** reset the values of the state when changing modes */
   React.useEffect(() => {
     setWholeNumber('');
     setFractionNumber('');
@@ -27,21 +30,30 @@ function App() {
     setMaxExponent(mode === 'single' ? 127 : 1023)
   }, [mode])
 
+  /**
+   * This function uses the normalized form of the input and returns the right binary 
+   * and hex output. This also checks all the special values and return the appropriate  
+   * value if the condition is met.
+   */
   function convertInput() {
     const { fraction, exp } = normalize();
-
+    
+    /** determines the correct bias value and readjust the exponent value */
     const bias = mode === 'single' ? 127 : 1023;
     const exponentWithBias = exp + bias;
 
+    /** create a container holding exponent and significand based on the mode */
     const sizeOfExponent = mode === 'single' ? 8 : 11;
     let exponentBinaryString = exponentWithBias.toString(2);
     const sizeOfSignificand = mode === 'single' ? 23 : 52;
     const significandPlaceholder = [...Array(sizeOfSignificand).fill('0')];
 
+    /** mapping of the significand to the container */
     fraction.forEach((s, i) => {
       significandPlaceholder[i] = s;
     });
 
+    /** prepend zero to exponent to return correct length */
     if (exponentBinaryString.length < sizeOfExponent) {
       let prependZero = '';
       for (let i=0; i<sizeOfExponent-exponentBinaryString.length; i++) {
@@ -50,6 +62,7 @@ function App() {
       exponentBinaryString = prependZero + exponentBinaryString;
     }
 
+    /** conditions for special values, return the correct output */
     const hasNoSignificand = fraction.every(d => d === '0');
     const maxExponent = mode === 'single' ? 254 : 2046;
 
@@ -80,6 +93,11 @@ function App() {
     }
   }
 
+
+  /**
+   *  This function checks if the input is in its normalized form.
+   *  If not, it will normallized it and return the new significand value and exponent value.
+   */
   function normalize() {
     const wholeNumberArr = wholeNumber.split('');
     const fractionNumberArr = fractionNumber.split('');
@@ -108,6 +126,7 @@ function App() {
     }   
   }
 
+  /** create and render the input and output elements */
   return ( 
     <Container>
       <br />
