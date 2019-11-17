@@ -65,8 +65,12 @@ function App() {
     /** conditions for special values, return the correct output */
     const hasNoSignificand = fraction.every(d => d === '0');
     const maxExponent = mode === 'single' ? 254 : 2046;
+    const invalidSignificand = fraction.some(d => d > 1) || wholeNumber.split('').some(d => d > 1);
 
-    if (sign === '0' && exponentWithBias < 1 && hasNoSignificand) {
+    if (invalidSignificand) {
+      setBinaryOutput('Invalid input');
+      setHexOutput('Invalid input');
+    } else if (sign === '0' && exponentWithBias < 1 && hasNoSignificand) {
       setBinaryOutput('+0 (Positive Zero)');
       setHexOutput('+0 (Positive Zero)');
     } else if (sign === '1' && exponentWithBias < 1 && hasNoSignificand) {
