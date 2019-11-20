@@ -1,6 +1,8 @@
 {
   "name": "binary-floating-point-converter",
   "version": "0.1.0",
+  "main": "public/Main.js",
+  "homepage": "./",
   "private": true,
   "dependencies": {
     "bootstrap": "^4.3.1",
@@ -13,7 +15,20 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-start": "electron .",
+    "preelectron-pack": "npm run build",
+    "electron-pack": "build --win --macos -c.extraMetadata.main=build/Main.js"
+  },
+  "build": {
+    "appId": "nonExistentID",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -29,5 +44,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "electron": "^7.1.2",
+    "electron-builder": "^21.2.0"
   }
 }
